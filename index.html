@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Is it safe to fly my drone today?</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Safe to Fly Today?</p>
+      <h1>Is it safe to fly my drone today?</h1>
+    </div>
+    <div class="controls">
+      <button id="location-btn" class="primary">Use my location</button>
+      <div class="input-group">
+        <input id="location-input" type="text" placeholder="Enter city, state or lat,long" />
+        <button id="search-btn">Search</button>
+      </div>
+      <div class="unit-toggle">
+        <label>Wind</label>
+        <select id="wind-unit">
+          <option value="mph">mph</option>
+          <option value="kph">kph</option>
+        </select>
+        <label>Temp</label>
+        <select id="temp-unit">
+          <option value="f">°F</option>
+          <option value="c">°C</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <section id="status-section" class="status-section">
+    <div>
+      <p id="location-label" class="muted">No location selected</p>
+      <div class="status-row">
+        <span id="overall-status" class="pill">Waiting...</span>
+        <span id="best-window" class="pill secondary">Best window: --</span>
+      </div>
+      <p id="status-detail" class="muted">Allow location or enter a place to get started.</p>
+    </div>
+    <div class="actions">
+      <button id="how-btn" class="ghost">How we rate</button>
+      <a href="https://knowbeforeyoufly.org/" class="ghost" target="_blank" rel="noopener">Check local drone rules / airspace</a>
+    </div>
+  </section>
+
+  <main id="forecast" class="forecast"></main>
+
+  <section class="disclaimer">
+    Weather guidance only. Always verify local regulations and airspace before flying.
+  </section>
+
+  <dialog id="how-modal" class="modal">
+    <div class="modal-content">
+      <h2>How we rate</h2>
+      <div id="rule-list"></div>
+      <button id="close-how" class="primary">Close</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="./dist/src/main.js"></script>
+</body>
+</html>

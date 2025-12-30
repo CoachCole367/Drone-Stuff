@@ -1,4 +1,5 @@
 export type RatingLabel = 'Good' | 'Risky' | 'Bad';
+export type CalendarFilter = 'all' | RatingLabel;
 
 export interface Thresholds {
   windGood: number;

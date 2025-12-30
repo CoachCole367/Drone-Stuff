@@ -1,11 +1,12 @@
 import { fetchForecast, geocode } from './dataService.js';
 import { renderForecast, renderRules } from './ui.js';
-import { HourlyWeather } from './types.js';
+import { CalendarFilter, HourlyWeather } from './types.js';
 
 let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let windUnit: 'mph' | 'kph' = 'mph';
 let tempUnit: 'f' | 'c' = 'f';
 let viewMode: '24h' | '72h' | 'weekly' = '24h';
+let calendarFilter: CalendarFilter = 'all';
 let allHours: HourlyWeather[] = [];
 let lastHours: HourlyWeather[] = [];
 
@@ -57,7 +58,7 @@ async function loadForecast(lat: number, lon: number, label: string, tz?: string
     updateLocationLabel(label, resolvedTz);
     allHours = forecast.hours;
     lastHours = filterByView(forecast.hours, resolvedTz, viewMode);
-    renderForecast(lastHours, { windUnit, tempUnit, timezone: resolvedTz });
+    renderForecast(lastHours, { windUnit, tempUnit, timezone: resolvedTz, calendarFilter });
     updateStatusText(statusCopyForMode(viewMode));
   } catch (err) {
     console.error(err);
@@ -165,6 +166,16 @@ function setupControls() {
     refreshExisting();
     updateStatusText(statusCopyForMode(viewMode));
   });
+
+  document.querySelectorAll('[data-calendar-filter]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const value = (btn as HTMLElement).dataset.calendarFilter as CalendarFilter | undefined;
+      if (!value) return;
+      calendarFilter = value;
+      updateCalendarFilterUI(value);
+      refreshExisting();
+    });
+  });
 }
 
 function openModal() {
@@ -181,12 +192,25 @@ function refreshExisting() {
   if (!lastHours.length) return;
   const filtered = filterByView(allHours.length ? allHours : lastHours, timezone, viewMode);
   lastHours = filtered;
-  renderForecast(lastHours, { windUnit, tempUnit, timezone });
+  renderForecast(lastHours, { windUnit, tempUnit, timezone, calendarFilter });
+}
+
+function updateCalendarFilterUI(selected: CalendarFilter) {
+  document.querySelectorAll('[data-calendar-filter]').forEach((btn) => {
+    const value = (btn as HTMLElement).dataset.calendarFilter as CalendarFilter | undefined;
+    if (!value) return;
+    if (value === selected) {
+      btn.classList.add('chip-active');
+    } else {
+      btn.classList.remove('chip-active');
+    }
+  });
 }
 
 function init() {
   setupControls();
   renderRules();
+  updateCalendarFilterUI(calendarFilter);
   requestLocation();
 }
 

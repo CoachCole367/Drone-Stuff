@@ -190,6 +190,73 @@ button.ghost, a.ghost {
   font-size: 14px;
 }
 
+.calendar-section {
+  margin-top: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chip-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip-active {
+  background: rgba(56,189,248,0.2);
+  border-color: rgba(56,189,248,0.6);
+  color: #e0f2fe;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.day-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.day-title {
+  font-size: 18px;
+  margin: 0;
+}
+
 .modal::backdrop { background: rgba(0,0,0,0.65); }
 
 .modal {

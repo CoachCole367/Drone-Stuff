@@ -6,6 +6,7 @@ Is it safe to fly my drone today? A lightweight, browser-only app that checks ho
 
 1. Build TypeScript: `npm run build` (uses the bundled TypeScript compiler).
 2. Open `index.html` in a browser (no dev server required).
+3. For GitHub Pages, generate the publishable bundle (including CSS) with `npm run build:docs`, then push the `docs/` folder.
 
 The app will request geolocation on load and falls back to manual search (city/state or `lat,long`).
 

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && node dist/tests/rating.test.js"
+    "test": "npm run build && node dist/tests/rating.test.js",
+    "build:docs": "npm run build && node scripts/build-docs.mjs"
   }
 }

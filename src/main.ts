@@ -50,10 +50,12 @@ async function loadForecast(lat: number, lon: number, label: string, tz?: string
   setLoading(true);
   try {
     const forecast = await fetchForecast(lat, lon);
-    timezone = tz ?? forecast.timezone;
-    updateLocationLabel(label, timezone);
-    lastHours = filterToday(forecast.hours, timezone);
-    renderForecast(lastHours, { windUnit, tempUnit, timezone });
+    const resolvedTz = forecast.timezone;
+    timezone = resolvedTz;
+    updateLocationLabel(label, resolvedTz);
+    lastHours = filterNext24Hours(forecast.hours, resolvedTz);
+    renderForecast(lastHours, { windUnit, tempUnit, timezone: resolvedTz });
+    updateStatusText('Showing the next 24 hours from the current local time.');
   } catch (err) {
     console.error(err);
     updateStatusText('Weather API failed. Try again in a minute.');
@@ -62,10 +64,29 @@ async function loadForecast(lat: number, lon: number, label: string, tz?: string
   }
 }
 
-function filterToday(hours: HourlyWeather[], tz: string): HourlyWeather[] {
-  const now = new Date();
-  const today = new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(now);
-  return hours.filter((h) => h.time.startsWith(today)).slice(0, 24);
+function filterNext24Hours(hours: HourlyWeather[], tz: string): HourlyWeather[] {
+  const nowKey = formatHourKey(new Date(), tz);
+  const startIdx = hours.findIndex((h) => h.time >= nowKey);
+  const begin = startIdx >= 0 ? startIdx : 0;
+  return hours.slice(begin, begin + 24);
+}
+
+function formatHourKey(date: Date, tz: string): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+  const year = get('year');
+  const month = get('month');
+  const day = get('day');
+  const hour = get('hour');
+  return `${year}-${month}-${day}T${hour}:00`;
 }
 
 function parseLatLong(input: string): { lat: number; lon: number } | undefined {

@@ -273,10 +273,12 @@ button.ghost, a.ghost {
   border-radius: 16px;
   min-width: 320px;
   max-width: 540px;
+  color: var(--text);
 }
 
 .rule-list { display: grid; gap: 8px; }
 .rule-card { background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 12px; border: 1px solid var(--border); }
+.rule-card strong { color: var(--text); }
 
 .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-size: 12px; margin: 0 0 6px 0; }
 

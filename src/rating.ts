@@ -107,6 +107,7 @@ export function ruleDescriptions(): RatingRuleDescription[] {
     { title: 'Precipitation', detail: 'Bad for thunderstorms, snow, freezing rain, heavy rain. Risky for light rain/drizzle or precip chance ≥ 40%.' },
     { title: 'Visibility', detail: 'Bad below 3 miles, risky 3–5 miles. Ignored if not provided by the API.' },
     { title: 'Temperature', detail: 'Risky below 14°F (-10°C). Bad below 0°F (-18°C) or with icing risk.' },
+    { title: 'Why these numbers', detail: 'They follow conservative VLOS drone practices: avoid gusts, moisture, low visibility, and extreme cold. Adjust thresholds if your aircraft and experience support different limits.' },
     { title: 'Final label', detail: 'Any Bad trigger → Bad. Else if any Risky trigger → Risky. Otherwise Good.' },
   ];
 }

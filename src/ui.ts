@@ -11,6 +11,7 @@ export interface UIOptions {
 export function renderRules() {
   const rules = ruleDescriptions();
   const container = document.getElementById('rule-list');
+  const note = document.getElementById('rule-note');
   if (!container) return;
   container.innerHTML = '';
   rules.forEach((r) => {
@@ -19,6 +20,11 @@ export function renderRules() {
     div.innerHTML = `<strong>${r.title}</strong><div class="muted">${r.detail}</div>`;
     container.appendChild(div);
   });
+
+  if (note) {
+    note.textContent =
+      'These limits are intentionally conservative for typical recreational drones. Tune thresholds in src/config.ts to match your aircraft and comfort level.';
+  }
 }
 
 export function renderForecast(hours: HourlyWeather[], opts: UIOptions) {

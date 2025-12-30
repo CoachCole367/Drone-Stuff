@@ -143,12 +143,15 @@ function setupControls() {
     const windSelect = document.getElementById('wind-unit');
     const tempSelect = document.getElementById('temp-unit');
     const viewSelect = document.getElementById('view-mode');
+    loadUnitPreferences(windSelect, tempSelect);
     windSelect?.addEventListener('change', () => {
         windUnit = windSelect.value;
+        persistUnitPreferences();
         refreshExisting();
     });
     tempSelect?.addEventListener('change', () => {
         tempUnit = tempSelect.value;
+        persistUnitPreferences();
         refreshExisting();
     });
     viewSelect?.addEventListener('change', () => {
@@ -204,3 +207,35 @@ function init() {
     requestLocation();
 }
 document.addEventListener('DOMContentLoaded', init);
+function persistUnitPreferences() {
+    if (typeof localStorage === 'undefined')
+        return;
+    try {
+        localStorage.setItem('windUnit', windUnit);
+        localStorage.setItem('tempUnit', tempUnit);
+    }
+    catch (err) {
+        console.warn('Unable to store preferences', err);
+    }
+}
+function loadUnitPreferences(windSelect, tempSelect) {
+    if (typeof localStorage === 'undefined')
+        return;
+    try {
+        const savedWind = localStorage.getItem('windUnit');
+        const savedTemp = localStorage.getItem('tempUnit');
+        if (savedWind === 'mph' || savedWind === 'kph') {
+            windUnit = savedWind;
+            if (windSelect)
+                windSelect.value = savedWind;
+        }
+        if (savedTemp === 'f' || savedTemp === 'c') {
+            tempUnit = savedTemp;
+            if (tempSelect)
+                tempSelect.value = savedTemp;
+        }
+    }
+    catch (err) {
+        console.warn('Unable to load preferences', err);
+    }
+}

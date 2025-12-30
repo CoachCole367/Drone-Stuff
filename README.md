@@ -11,7 +11,7 @@ The app will request geolocation on load and falls back to manual search (city/s
 
 ## Features
 
-- Hourly forecast from Open-Meteo (winds, gusts, precip, temp, visibility, cloud cover, thunder).
+- Hourly forecast from Open-Meteo (winds, gusts, precip, temp, visibility, cloud cover, thunder) showing the next 24 hours from right now.
 - Rating engine with configurable thresholds (see `src/config.ts`).
 - "How we rate" modal explaining the rules.
 - Best 1–3 hour flying window suggestion.

@@ -54,6 +54,7 @@ async function loadForecast(lat: number, lon: number, label: string, tz?: string
     updateLocationLabel(label, timezone);
     lastHours = filterNext24Hours(forecast.hours, timezone);
     renderForecast(lastHours, { windUnit, tempUnit, timezone });
+    updateStatusText('Showing the next 24 hours from the current local time.');
   } catch (err) {
     console.error(err);
     updateStatusText('Weather API failed. Try again in a minute.');

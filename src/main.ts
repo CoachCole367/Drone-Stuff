@@ -5,6 +5,8 @@ import { HourlyWeather } from './types.js';
 let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let windUnit: 'mph' | 'kph' = 'mph';
 let tempUnit: 'f' | 'c' = 'f';
+let viewMode: '24h' | '72h' | 'weekly' = '24h';
+let allHours: HourlyWeather[] = [];
 let lastHours: HourlyWeather[] = [];
 
 async function requestLocation() {
@@ -53,9 +55,10 @@ async function loadForecast(lat: number, lon: number, label: string, tz?: string
     const resolvedTz = forecast.timezone;
     timezone = resolvedTz;
     updateLocationLabel(label, resolvedTz);
-    lastHours = filterNext24Hours(forecast.hours, resolvedTz);
+    allHours = forecast.hours;
+    lastHours = filterByView(forecast.hours, resolvedTz, viewMode);
     renderForecast(lastHours, { windUnit, tempUnit, timezone: resolvedTz });
-    updateStatusText('Showing the next 24 hours from the current local time.');
+    updateStatusText(statusCopyForMode(viewMode));
   } catch (err) {
     console.error(err);
     updateStatusText('Weather API failed. Try again in a minute.');
@@ -64,11 +67,33 @@ async function loadForecast(lat: number, lon: number, label: string, tz?: string
   }
 }
 
-function filterNext24Hours(hours: HourlyWeather[], tz: string): HourlyWeather[] {
+function filterByView(hours: HourlyWeather[], tz: string, mode: typeof viewMode): HourlyWeather[] {
   const nowKey = formatHourKey(new Date(), tz);
   const startIdx = hours.findIndex((h) => h.time >= nowKey);
   const begin = startIdx >= 0 ? startIdx : 0;
-  return hours.slice(begin, begin + 24);
+
+  if (mode === '72h') {
+    return sampleRange(hours, begin, 72, 4);
+  }
+
+  if (mode === 'weekly') {
+    const targetHours = ['T08:00', 'T20:00'];
+    const filtered = hours.filter((h) => h.time >= nowKey && targetHours.some((t) => h.time.includes(t)));
+    return filtered.slice(0, 14);
+  }
+
+  return sampleRange(hours, begin, 24, 1);
+}
+
+function sampleRange(hours: HourlyWeather[], startIdx: number, totalHours: number, stepHours: number): HourlyWeather[] {
+  const result: HourlyWeather[] = [];
+  const maxIdx = hours.length;
+  for (let offset = 0; offset < totalHours; offset += stepHours) {
+    const idx = startIdx + offset;
+    if (idx >= maxIdx) break;
+    result.push(hours[idx]);
+  }
+  return result;
 }
 
 function formatHourKey(date: Date, tz: string): string {
@@ -102,6 +127,12 @@ function updateLocationLabel(label: string, tz: string) {
   }
 }
 
+function statusCopyForMode(mode: typeof viewMode): string {
+  if (mode === '72h') return 'Showing the next 72 hours (every 4 hours) from the current local time.';
+  if (mode === 'weekly') return 'Showing 8 AM and 8 PM snapshots for the upcoming week.';
+  return 'Showing the next 24 hours from the current local time.';
+}
+
 function updateStatusText(message: string) {
   const el = document.getElementById('status-detail');
   if (el) el.textContent = message;
@@ -120,6 +151,7 @@ function setupControls() {
 
   const windSelect = document.getElementById('wind-unit') as HTMLSelectElement | null;
   const tempSelect = document.getElementById('temp-unit') as HTMLSelectElement | null;
+  const viewSelect = document.getElementById('view-mode') as HTMLSelectElement | null;
   windSelect?.addEventListener('change', () => {
     windUnit = windSelect.value as 'mph' | 'kph';
     refreshExisting();
@@ -127,6 +159,11 @@ function setupControls() {
   tempSelect?.addEventListener('change', () => {
     tempUnit = tempSelect.value as 'f' | 'c';
     refreshExisting();
+  });
+  viewSelect?.addEventListener('change', () => {
+    viewMode = viewSelect.value as typeof viewMode;
+    refreshExisting();
+    updateStatusText(statusCopyForMode(viewMode));
   });
 }
 
@@ -142,6 +179,8 @@ function closeModal() {
 
 function refreshExisting() {
   if (!lastHours.length) return;
+  const filtered = filterByView(allHours.length ? allHours : lastHours, timezone, viewMode);
+  lastHours = filtered;
   renderForecast(lastHours, { windUnit, tempUnit, timezone });
 }
 

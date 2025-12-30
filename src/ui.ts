@@ -134,7 +134,10 @@ function renderCalendar(hours: HourWithRating[], opts: UIOptions) {
   if (!grid) return;
 
   const summaries = summarizeByDay(hours, opts.timezone, opts.windUnit);
-  const filtered = opts.calendarFilter === 'all' ? summaries : summaries.filter((s) => s.label === opts.calendarFilter);
+  const filtered =
+    opts.calendarFilter === 'all'
+      ? summaries
+      : summaries.filter((s) => s.labels.includes(opts.calendarFilter as Exclude<CalendarFilter, 'all'>));
   grid.innerHTML = '';
 
   if (!filtered.length) {
@@ -189,6 +192,7 @@ function summarizeByDay(hours: HourWithRating[], tz: string, windUnit: 'mph' | '
 
   return Array.from(dayMap.entries()).map(([dateKey, list]) => {
     const label = worstLabel(list.map((h) => h.rating.label));
+    const labels = Array.from(new Set(list.map((h) => h.rating.label)));
     const reasons = Array.from(new Set(list.filter((h) => h.rating.label === label).flatMap((h) => h.rating.reasons)));
     const maxWindVal = Math.max(...list.map((h) => (windUnit === 'mph' ? h.windSpeedMph : h.windSpeedKph)));
     const maxGustVal = Math.max(...list.map((h) => (windUnit === 'mph' ? h.windGustMph : h.windGustKph)));
@@ -200,6 +204,7 @@ function summarizeByDay(hours: HourWithRating[], tz: string, windUnit: 'mph' | '
       dayName: new Date(anchorDate).toLocaleDateString([], { weekday: 'long', timeZone: tz }),
       displayDate: anchorDate,
       label,
+      labels,
       reasons,
       maxWind: `${maxWindVal.toFixed(0)} ${windUnit}`,
       maxGust: `${maxGustVal.toFixed(0)} ${windUnit}`,

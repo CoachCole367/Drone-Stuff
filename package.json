@@ -1,0 +1,11 @@
+{
+  "name": "drone-safe",
+  "version": "1.0.0",
+  "description": "Is it safe to fly my drone today?",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node dist/tests/rating.test.js",
+    "build:docs": "npm run build && node scripts/build-docs.mjs"
+  }
+}
